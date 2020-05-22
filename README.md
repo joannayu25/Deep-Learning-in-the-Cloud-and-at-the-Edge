@@ -21,15 +21,12 @@ A Docker image, `broker_image`, is first created for the MQTT broker using the l
 `/usr/sbin/mosquitto`
 
 If successful, the output should be similar to:
-
-`1589786753: mosquitto version 1.6.8 starting
-
+```
+1589786753: mosquitto version 1.6.8 starting
 1589786753: Using default config.
-
 1589786753: Opening ipv4 listen socket on port 1883.
-
-1589786753: Opening ipv6 listen socket on port 1883.`
-
+1589786753: Opening ipv6 listen socket on port 1883.
+```
 The broker will now accept connections from other clients. 
 
 ## Face Detection 
