@@ -5,7 +5,7 @@
 ## Introduction
 The overall goal of the assignment is to be able to capture faces in a video stream coming from the edge in real time, transmit them to the cloud in real time, and save these faces in the cloud for long term storage. The pipeline is depicted in the following picture. The pipeline uses the Jetson TX2 as the edge device to capture faces using OpenCV. The messaging protocol is MQTT. The cloud part is run using IBM Cloud and Object Storage. All components are packaged in Docker containers.
 
-![pipeline_diagram](/hw03.png)
+![pipeline_diagram](IoT_101/hw03.png)
 
 ## Edge: Bridge Network
 A bridge network called `hw3_bridge` is created so containers can connect to it.
