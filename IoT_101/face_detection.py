@@ -24,9 +24,6 @@ while True:
     for (x, y, w, h) in faces:
         cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 2)
         face_gray = gray[y:y + h, x:x + w] 
-        # print("[INFO] Object found. Saving locally.") 
-        # Save each face as a jpg.
-        cv2.imwrite('face_' + str(w) + str(h) + '.jpg', face_gray) 
         # Encode as binary message and send
         _, png = cv2.imencode('.png', face_gray)
         msg = png.tobytes()
