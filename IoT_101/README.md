@@ -3,7 +3,7 @@
 ### Wednesday 4pm, Summer 2020
 
 ## Introduction
-The overall goal of the assignment is to be able to capture faces in a video stream coming from the edge in real time, transmit them to the cloud in real time, and save these faces in the cloud for long term storage. The pipeline is depicted in the following picture. The pipeline uses the Jetson TX2 as the edge device to capture faces using OpenCV. The messaging protocol is MQTT. The cloud part is run using IBM Cloud and Object Storage. All components are packaged in Docker containers.
+The overall goal of the assignment is to be able to capture faces in a video stream coming from the edge in real time, transmit them to the cloud in real time, and save these faces in the cloud for long term storage. The general pipeline is depicted in the following picture. The pipeline uses the Jetson TX2 as the edge device to capture faces using OpenCV. The messaging protocol is MQTT. The cloud part is run using IBM Cloud and Object Storage. All components are packaged in Docker containers. All containers run in Alpine except the face detection piece, which runs in CUDA Ubuntu.
 
 ![pipeline_diagram](/IoT_101/hw03.png)
 
@@ -18,6 +18,7 @@ For debugging purposes, containers connected to `hw3_bridge` can be listed by ru
 A Docker image, `broker_image`, is first created for the MQTT broker using the lightweight Alpine Linux distro with `Dockerfile.broker`. Then a container, called 'mosquitto', is created to start the MQTT broker. 
 
 ```
+sudo docker build -t broker_image -f Dockerfile.broker .
 sudo docker run --name mosquitto --network hw3_bridge -p 1883:1883 -ti broker_image sh
 /usr/sbin/mosquitto
 ```
@@ -32,11 +33,12 @@ If successful, the output should be similar to:
 The broker will now accept connections from other clients. 
 
 ## Edge: Face Detection 
-Face detection, `face_detect.py`, is done by using OpenCV's pre-trained frontal face HARR Cascade Classifier. Once one or more faces are detected, they will be marked by rectangles. The faces will then be cropped out and sent to the broker under the topic `face_detection_topic`. Messages should not be lost between the face detection client and the broker since the transmission does not involve an external network.  
+Face detection, `face_detect.py`, uses OpenCV's pre-trained frontal face HARR Cascade Classifier. Once one or more faces are detected, they will be marked by rectangles. The faces will then be cropped and sent to the broker under the topic `face_detection_topic`. The QoS is set to 0 as messages should not be lost between the face detection client and the broker since the transmission does not involve an external network.  
    
-A Docker image, `face_detect_image`, is first created for the face detection client using CUDA with file `Dockerfile.face_detect`. A container called `face_detection` is created from the image.
+A Docker image, `face_detect_image`, is first created for the face detection client with file `Dockerfile.face_detect`. A container called `face_detection` is created from the image.
 ```
 sudo docker build -t face_detect_image -f Dockerfile.face_detect .
+xhost +
 sudo docker run --name face_detection -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --rm --privileged --network hw3_bridge -it face_detect_image bash
 ```
 Once inside the container, `face_detection.py` is loaded to start the app. It will connect to the MQTT broker (`mosquitto` container), bring up the USB camera, start detecting faces, and publish the faces as binary messages to the MQTT broker. 
@@ -61,7 +63,7 @@ Once inside the container, start the client so it can connect to the local broke
 connected to local broker with rc: 0
 ```
 
-The forwarder will then re-publish the message with QoS 0. Since faces typically show up in camera for at least a couple seconds and during that time, many copies of the faces are being re-publish by the forwarder, there is good assurance that many  will get to the broker in the cloud even at QoS 0.
+The forwarder first connects to the broker and subscribes to the `face_detection_topic`. Upon receiving messages, the forwarder will then re-publish the message to the cloud broker under the same topic name (`face_detection_topic`) with QoS 0. Since faces typically show up in camera for at least a couple seconds and during that time, many copies of the faces are being re-publish by the forwarder, there is good assurance that many copies will get to the broker in the cloud even at QoS 0.
 
 ## Cloud: Setup
 
@@ -104,7 +106,7 @@ make
 sudo make install
 ```
 
-Object storage instance named `jy-obj-store` and a bucket named `jy-w251-bucket` are created. The service key named `jy_obj_store_key` is created with HMAC enabled using CLI:
+Object storage instance named `jy-obj-store` and a bucket named `hw3-faces2` are created. The service key named `jy_obj_store_key` is created with HMAC enabled using CLI:
 
 `ibmcloud resource service-key-create jy_obj_store_key Writer --instance-name jy-obj-store --parameters '{"HMAC":true}'`
 
@@ -116,14 +118,14 @@ chmod 600 $HOME/.cos_creds
 
 Mount the bucket:
 ```
-sudo mkdir -m 777 /mnt/jy_w251-bucket
-sudo s3fs bucketname /mnt/jy_w251_bucket -o passwd_file=$HOME/.cos_creds -o sigv2 -o use_path_request_style -o url=https://s3.us-east.objectstorage.softlayer.net
+sudo mkdir -m 777 /mnt/mybucket
+sudo s3fs hw3-faces /mnt/mybucket -o passwd_file=$HOME/.cos_creds -o sigv2 -o use_path_request_style -o url=https://s3.us-south.cloud-object-storage.appdomain.cloud
 ```
 ## Cloud: Broker
 A Docker image, `cloud_broker_image`, is first created for the MQTT broker using the lightweight Alpine Linux distro with `Dockerfile.broker`. Then a container called 'mosquitto' is created to start the MQTT broker.
 ```
 docker build -t cloud_broker_image -f Dockerfile.broker .
-docker run --name mosquitto -p 1883:1883 -ti broker_image sh
+docker run --name mosquitto -p 1883:1883 -ti cloud_broker_image sh
 /usr/sbin/mosquitto
 ```
 If successful, the output should be similar to:
@@ -141,5 +143,9 @@ As the forwarder successfully connects to the cloud broker, the output should be
 ```
 
 ## Cloud: MQTT Client
+A MQTT client is created using `cloud_client.py`, which connects to the cloud broker and subscribes to the `face_detection_topic'. Upon receiving messages, the cloud client will extract and save the images to IBM Object Storage (bucket `hw3-faces2`) via the mounted folder. The container, where the cloud client runs from, is created from an image from the Dockerfile `Dockerfile.cloud_client` with the lightweight Alpine Linux distro environment.
 
+The bucket will need to have public access enabled. The link to the Object Storage is: `http://s3.us-south.cloud-object-storage.appdomain.cloud/hw3-faces2/` 
 
+Here is a sample image:
+![sample_image](/IoT_101/img_99.png)
