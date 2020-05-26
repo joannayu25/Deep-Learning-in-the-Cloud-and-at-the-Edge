@@ -63,7 +63,7 @@ Once inside the container, start the client so it can connect to the local broke
 connected to local broker with rc: 0
 ```
 
-The forwarder first connects to the broker and subscribes to the `face_detection_topic`. Upon receiving messages, the forwarder will then re-publish the message to the cloud broker under the same topic name (`face_detection_topic`) with QoS 0. Since faces typically show up in camera for at least a couple seconds and during that time, many copies of the faces are being re-publish by the forwarder, there is good assurance that many copies will get to the broker in the cloud even at QoS 0.
+The forwarder first connects to the broker and subscribes to the `face_detection_topic`. Upon receiving messages, the forwarder will then re-publish the message to the cloud broker under the same topic name (`face_detection_topic`) with QoS 0. Since faces typically show up in camera for at least a couple seconds and during that time, many copies of the faces are being re-published by the forwarder. There is good assurance that many copies will get to the cloud broker even at QoS 0.
 
 ## Cloud: Setup
 
