@@ -122,6 +122,8 @@ Mount the bucket:
 sudo mkdir -m 777 /mnt/mybucket
 sudo s3fs hw3-faces /mnt/mybucket -o passwd_file=$HOME/.cos_creds -o sigv2 -o use_path_request_style -o url=https://s3.us-south.cloud-object-storage.appdomain.cloud
 ```
+*Note: The content of the bucket should be visible in `/mnt/mybucket` if the mounting is successful. Otherwise, the debug log can be accessed by adding the -f option at the end.* 
+
 
 ## Cloud: Broker
 A Docker image, `cloud_broker_image`, is first created for the MQTT broker using the lightweight Alpine Linux distro with `Dockerfile.broker`. Then a container called 'mosquitto' is created to start the MQTT broker.
@@ -147,7 +149,24 @@ As the forwarder successfully connects to the cloud broker, the output should be
 ## Cloud: MQTT Client
 A MQTT client is created using `cloud_client.py`, which connects to the cloud broker and subscribes to the `face_detection_topic`. Upon receiving messages, the cloud client will extract and save the images to IBM Object Storage (bucket `hw3-faces2`) via the mounted folder. The container, where the cloud client runs from, is created from an image from the Dockerfile `Dockerfile.cloud_client` with the lightweight Alpine Linux distro environment.
 
-The bucket will need to have public access enabled. The link to the Object Storage is: `http://s3.us-south.cloud-object-storage.appdomain.cloud/hw3-faces2/` 
+```
+docker build -t cloud_client_image -f Dockerfile.cloud .
+docker run --name cloud_client -v /mnt/mybucket:/my_faces -ti cloud_client_image sh
+```
+
+Once inside the container, run the cloud client: 
+
+`python cloud_client.py`
+
+As the client connects to the broker and receives messages, the output should be:
+```
+connected to cloud broker with rc: 0
+subscribed to topic: face_detection_topic
+message received!
+image saved to /my_faces/img_0.png
+```
+
+To allow http access to the bucket, public access will need to be enabled in Buckets -> Access Policies -> Public Access. The link to the Object Storage is: `http://s3.us-south.cloud-object-storage.appdomain.cloud/hw3-faces2/` 
 
 Here is a sample image:
 

@@ -29,11 +29,8 @@ def on_message(client,userdata, msg):
 		print("Unexpected error:", sys.exc_info()[0])
 
 cloud_mqttclient = mqtt.Client()
-print('initiated client')
 cloud_mqttclient.on_connect = on_connect_cloud
-print('on_connect')
 cloud_mqttclient.connect(CLOUD_MQTT_HOST, CLOUD_MQTT_PORT, 60)
-print('connect to broker')
 cloud_mqttclient.on_message = on_message
 
 # go into a loop
