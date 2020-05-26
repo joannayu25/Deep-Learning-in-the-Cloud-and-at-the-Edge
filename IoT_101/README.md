@@ -107,8 +107,9 @@ sudo make install
 ```
 
 Object storage instance named `jy-obj-store` and a bucket named `hw3-faces2` are created. The service key named `jy_obj_store_key` is created with HMAC enabled using CLI:
-
-`ibmcloud resource service-key-create jy_obj_store_key Writer --instance-name jy-obj-store --parameters '{"HMAC":true}'`
+```
+ibmcloud resource service-key-create jy_obj_store_key Writer --instance-name jy-obj-store --parameters '{"HMAC":true}'
+```
 
 To configure s3fs-fuse, set up the credential using the access key ID and secret access key from Service Credentials.
 ```
@@ -121,6 +122,7 @@ Mount the bucket:
 sudo mkdir -m 777 /mnt/mybucket
 sudo s3fs hw3-faces /mnt/mybucket -o passwd_file=$HOME/.cos_creds -o sigv2 -o use_path_request_style -o url=https://s3.us-south.cloud-object-storage.appdomain.cloud
 ```
+
 ## Cloud: Broker
 A Docker image, `cloud_broker_image`, is first created for the MQTT broker using the lightweight Alpine Linux distro with `Dockerfile.broker`. Then a container called 'mosquitto' is created to start the MQTT broker.
 ```
@@ -143,9 +145,10 @@ As the forwarder successfully connects to the cloud broker, the output should be
 ```
 
 ## Cloud: MQTT Client
-A MQTT client is created using `cloud_client.py`, which connects to the cloud broker and subscribes to the `face_detection_topic'. Upon receiving messages, the cloud client will extract and save the images to IBM Object Storage (bucket `hw3-faces2`) via the mounted folder. The container, where the cloud client runs from, is created from an image from the Dockerfile `Dockerfile.cloud_client` with the lightweight Alpine Linux distro environment.
+A MQTT client is created using `cloud_client.py`, which connects to the cloud broker and subscribes to the `face_detection_topic`. Upon receiving messages, the cloud client will extract and save the images to IBM Object Storage (bucket `hw3-faces2`) via the mounted folder. The container, where the cloud client runs from, is created from an image from the Dockerfile `Dockerfile.cloud_client` with the lightweight Alpine Linux distro environment.
 
 The bucket will need to have public access enabled. The link to the Object Storage is: `http://s3.us-south.cloud-object-storage.appdomain.cloud/hw3-faces2/` 
 
 Here is a sample image:
+
 ![sample_image](/IoT_101/img_99.png)
