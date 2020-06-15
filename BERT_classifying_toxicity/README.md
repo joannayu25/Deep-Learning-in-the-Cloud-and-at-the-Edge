@@ -2,7 +2,7 @@
 
 **Joanna Yu**
 
-**Wendesday 4pm, Summer 2020**
+**Wednesday 4pm, Summer 2020**
 
 ## Introduction
 In this assignment, we will run BERT in pytorch on the Jigsaw Toxicity classification dataset. We will do so by running a Jupyter notebook in an IBM VM instance.
