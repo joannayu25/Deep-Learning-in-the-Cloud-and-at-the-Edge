@@ -25,6 +25,7 @@ The task for this part is to annotate the Millennium Falcon and TIE Fighters in 
 **Questions:**
 
 Describe the following augmentations in your own words:
+
 **Flip** - flips the image either horizontally (creating a mirror image) or vertically (creating an up-side down version).
 
 **Rotation** - rotates the image by a certain degree of angle. 
