@@ -126,3 +126,5 @@ scp -i 1810104 root@158.175.79.242:data/en-de-transformer/* ~/Downloads/
 ```
 
 ### Results
+BLEU plot should look something like this:
+![images/BLEU.png](BLEU.png)
