@@ -113,18 +113,55 @@ Password: my-api-key
     ``` 
     Training progress can be monitored in browser http://public_ip_of_vm1:6006 
     
-    x. *You will run out of credits unless you kill them after 50,000 steps* (the config file will make the model run for 300,000 steps unless you change the max_steps parameter or kill training by hand)
+    x. Training was stopped by hand after the BLEU score was calculated after 52,000 steps. The config file will make the model run for 300,000 steps but training was killed by hand to conserve IBM credits. 
     
-    xi. After your training is done, download your best model to your jetson tx2.  [Hint: it will be located in /data/en-de-transformer on the first VM]  Alternatively, you could always download a checkpoint from Nvidia [here](https://nvidia.github.io/OpenSeq2Seq/html/machine-translation.html)
- 
-### Create the tx2 container for openseq2seq 
-Let us create a tx2 compatible container for OpenSeq2Seq.  We probably won't be able to use it for training, but it could be useful for inference.  Make sure that you have a local TF container in your TX2 that we created when we completed during [HW 5](https://github.com/MIDS-scaling-up/v2/tree/master/week05/hw). (We also have all TF containers posted [in the W251 docker hub](https://cloud.docker.com/u/w251/repository/docker/w251/tensorflow) ). Then, use [this Dockerfile](https://github.com/MIDS-scaling-up/v2/blob/master/week09/hw/docker/arm64/Dockerfile.dev-tx2-4.2_b158-py3) . We will need this container for our in-class lab.  Put your downloaded best trained model someplace onto the external hard drive of your jetson -- e.g. /data/en-de-transformer
-   
-   
+    xi. After training is done, the best model is downloaded to the Jetson TX2.  [Hint: it will be located in /data/en-de-transformer on the first VM]  Alternatively, one could always download a checkpoint from Nvidia [here](https://nvidia.github.io/OpenSeq2Seq/html/machine-translation.html)
+       
 ```
 scp -i 1810104 root@158.175.79.242:data/en-de-transformer/* ~/Downloads/
 ```
 
 ### Results
-BLEU plot should look something like this:
+* How long does it take to complete the training run? (hint: this session is on distributed training, so it will take a while)
+> It took ~25 hours to do 52,000 steps on the V100s. 
+
+* Do you think your model is fully trained? How can you tell?
+> I do not think the model is fully trained because the BLEU score is still increasing as shown below. 
+> **BLEU Graph**
 ![BLEU graph](images/BLEU.png)
+
+* Were you overfitting?
+> I do not think the model is overfitting since both `train_loss` and `eval_loss` are still dropping as shown below.
+> **Train_loss Graph**
+![train_loss graph](images/train_loss.png)> 
+
+> **Eval_loss Graph**
+![eval_loss graph](images/eval_loss.png)
+
+* Were your GPUs fully utilized?
+> Output from `nvidia-smi` indicates that both GPUs were fully utilized at 100%, as shown below.
+> **nvidia-smi**
+![nvidia-smi graph](images/v100a_nvidia-smi.png)
+
+* Did you monitor network traffic (hint: apt install nmon )? Was network the bottleneck?
+> Yes, the network does not seem to be the bottleneck based on the output from `nmon`, as shown below.
+> **nmon**
+![nmon graph](images/nmon.png)
+
+* Take a look at the plot of the learning rate and then check the config file. Can you explan this setting?
+>
+
+* How big was your training set (mb)? How many training lines did it contain?
+>
+
+* What are the files that a TF checkpoint is comprised of?
+>
+
+* How big is your resulting model checkpoint (mb)?
+>
+
+* Remember the definition of a "step". How long did an average step take?
+> On average, a step takes ~1.8 seconds.
+
+* How does that correlate with the observed network utilization between nodes?
+> 
