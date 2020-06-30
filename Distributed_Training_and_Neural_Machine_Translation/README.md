@@ -122,46 +122,55 @@ scp -i 1810104 root@158.175.79.242:data/en-de-transformer/* ~/Downloads/
 ```
 
 ### Results
-* How long does it take to complete the training run? (hint: this session is on distributed training, so it will take a while)
+1. **How long does it take to complete the training run? (hint: this session is on distributed training, so it will take a while)**
 > It took ~25 hours to do 52,000 steps on the V100s. 
 
-* Do you think your model is fully trained? How can you tell?
+2. **Do you think your model is fully trained? How can you tell?**
 > I do not think the model is fully trained because the BLEU score is still increasing as shown below. 
+
 > **BLEU Graph**
 ![BLEU graph](images/BLEU.png)
 
-* Were you overfitting?
+3. **Were you overfitting?**
 > I do not think the model is overfitting since both `train_loss` and `eval_loss` are still dropping as shown below.
-> **Train_loss Graph**
+
+> **Train_Loss Graph**
 ![train_loss graph](images/train_loss.png)> 
 
 > **Eval_loss Graph**
 ![eval_loss graph](images/eval_loss.png)
 
-* Were your GPUs fully utilized?
+4. **Were your GPUs fully utilized?**
 > Output from `nvidia-smi` indicates that both GPUs were fully utilized at 100%, as shown below.
-> **nvidia-smi**
+> **nvidia-smi Screenshot**
 ![nvidia-smi graph](images/v100a_nvidia-smi.png)
 
-* Did you monitor network traffic (hint: apt install nmon )? Was network the bottleneck?
-> Yes, the network does not seem to be the bottleneck based on the output from `nmon`, as shown below.
-> **nmon**
+5. **Did you monitor network traffic (hint: apt install nmon )? Was network the bottleneck?**
+> Yes, I monitored the network traffic. The network does not seem to be the bottleneck based on the output from `nmon`, as shown below.
+
+> **nmon Screenshot**
 ![nmon graph](images/nmon.png)
 
-* Take a look at the plot of the learning rate and then check the config file. Can you explan this setting?
+6. **Take a look at the plot of the learning rate and then check the config file. Can you explan this setting?**
 >
 
-* How big was your training set (mb)? How many training lines did it contain?
+> **Learning Rate Graph**
+![Learning Rate graph](images/learning_rate.png)
+
+7. **How big was your training set (mb)? How many training lines did it contain?**
+> `train.de` is 711MB. `train.en` is 637MB. Each of these contains 4,562,102 lines.
+
+> **Training Data Screenshot**
+![Training Data Screenshot](images/train_data.png)
+
+8. **What are the files that a TF checkpoint is comprised of?**
 >
 
-* What are the files that a TF checkpoint is comprised of?
+9. **How big is your resulting model checkpoint (mb)?**
 >
 
-* How big is your resulting model checkpoint (mb)?
->
-
-* Remember the definition of a "step". How long did an average step take?
+10. **Remember the definition of a "step". How long did an average step take?**
 > On average, a step takes ~1.8 seconds.
 
-* How does that correlate with the observed network utilization between nodes?
+11. **How does that correlate with the observed network utilization between nodes?**
 > 
