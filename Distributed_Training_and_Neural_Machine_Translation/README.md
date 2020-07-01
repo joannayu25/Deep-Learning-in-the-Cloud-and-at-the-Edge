@@ -144,14 +144,15 @@ scp -i 1810104 root@158.175.79.242:data/en-de-transformer/* ~/Downloads/
 > Output from `nvidia-smi` indicates that both GPUs were fully utilized at 100%, as shown below.
 
 > **nvidia-smi Screenshot**
-![nvidia-smi graph](images/v100a_nvidia-smi.png)
+
+> ![nvidia-smi graph](images/v100a_nvidia-smi.png)
 
 5. **Did you monitor network traffic (hint: apt install nmon )? Was network the bottleneck?**
 > Yes, I monitored the network traffic. The network does not seem to be the bottleneck based on the output from `nmon`, as shown below. The network is pretty fast.
 
 > **nmon Screenshot**
 
->![nmon graph](images/v100a_nmon2.png)
+> ![nmon graph](images/v100a_nmon2.png)
 
 6. **Take a look at the plot of the learning rate and then check the config file. Can you explain this setting?**
 > **Learning Rate Graph**
