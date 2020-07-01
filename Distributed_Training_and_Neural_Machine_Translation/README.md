@@ -135,13 +135,14 @@ scp -i 1810104 root@158.175.79.242:data/en-de-transformer/* ~/Downloads/
 > I do not think the model is overfitting since both `train_loss` and `eval_loss` are still dropping as shown below.
 
 > **Train_Loss Graph**
-![train_loss graph](images/train_loss.png)> 
+![train_loss graph](images/train_loss.png)
 
 > **Eval_loss Graph**
 ![eval_loss graph](images/eval_loss.png)
 
 4. **Were your GPUs fully utilized?**
 > Output from `nvidia-smi` indicates that both GPUs were fully utilized at 100%, as shown below.
+
 > **nvidia-smi Screenshot**
 ![nvidia-smi graph](images/v100a_nvidia-smi.png)
 
@@ -151,7 +152,7 @@ scp -i 1810104 root@158.175.79.242:data/en-de-transformer/* ~/Downloads/
 > **nmon Screenshot**
 ![nmon graph](images/v100a_nmon2.png)
 
-6. **Take a look at the plot of the learning rate and then check the config file. Can you explan this setting?**
+6. **Take a look at the plot of the learning rate and then check the config file. Can you explain this setting?**
 > **Learning Rate Graph**
 ![learning rate graph](images/learning_rate.png)
 
@@ -161,13 +162,13 @@ scp -i 1810104 root@158.175.79.242:data/en-de-transformer/* ~/Downloads/
 > `train.de` is 711MB. `train.en` is 637MB. Each of these contains 4,562,102 lines.
 
 > **Training Data Screenshot**
-![Training Data Screenshot](images/train_data.png)
+![Training Data Screenshot](images/train_set_info.png)
 
 8. **What are the files that a TF checkpoint is comprised of?**
 > A TF checkpoint is comprised of a data file, a meta file, and an index file. The data file contains the model weights.
 
 9. **How big is your resulting model checkpoint (mb)?**
-> The model check point is 868MB. 
+> The model checkpoint is 868MB. 
 
 10. **Remember the definition of a "step". How long did an average step take?**
 > On average, a step takes ~1.8 seconds.
