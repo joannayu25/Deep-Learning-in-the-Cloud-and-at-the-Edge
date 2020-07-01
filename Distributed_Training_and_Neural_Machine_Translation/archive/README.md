@@ -54,10 +54,10 @@ Please submit the nohup.out file along with screenshots of your Tensorboard indi
 
 ### Hints
 Your BLEU TB plot should look something like this:
-![Validation BLEU curve](bleu2.jpg)
+![Validation BLEU curve](images/bleu2.jpg)
 
 Your loss should be something like:
-![Validation loss curve](loss.JPG)
+![Validation loss curve](images/loss.JPG)
 
 And your learning rate  should be something like:
-![Learning rate curve](lr.JPG)
+![Learning rate curve](images/lr.JPG)

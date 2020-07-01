@@ -98,15 +98,15 @@ Password: my-api-key
     
     iv. Edit /data/transformer-base.py: replace ```[REPLACE THIS TO THE PATH WITH YOUR WMT DATA]``` with ```/data/wmt16_de_en/```,  in base_parms section replace ```"logdir": "nmt-small-en-de",``` with ```"logdir": "/data/en-de-transformer/",```  make "batch_size_per_gpu": 128, and the in eval_params section set "repeat": to True.
     
-    v. If you are using V-100 GPUs, modify the config file to use mixed precision per the instructions in the file and set  "batch_size_per_gpu": 256 (yes, you can fit twice as much data in memory if you are using 16-bit precision)
+    v. When using V-100 GPUs, modify the config file to use mixed precision per the instructions in the file and set  "batch_size_per_gpu": 256 (One can fit twice as much data in memory when using 16-bit precision.)
     
     vi. Start training -- **on the first VM only:** ```nohup mpirun --allow-run-as-root -n 4 -H <vm1 private ip address>:2,<vm2 private ip address>:2 -bind-to none -map-by slot --mca btl_tcp_if_include eth0  -x NCCL_SOCKET_IFNAME=eth0 -x NCCL_DEBUG=INFO -x LD_LIBRARY_PATH  python run.py --config_file=/data/transformer-base.py --use_horovod=True --mode=train_eval & ```
     
-    vii. Note that the above command starts 4 total tasks (-n 4), two on each node (-H <vm1 private ip address>:2,<vm2 private ip address>:2), asks the script to use horovod for communication, which in turn, uses NCCL, and then forces NCCL to use the internal nics on the VMs for communication (-x NCCL_SOCKET_IFNAME=eth0). Mpi is only used to set up the cluster.
+    vii. Note that the above command starts 4 total tasks (-n 4), two on each node (-H <vm1 private ip address>:2,<vm2 private ip address>:2), asks the script to use horovod for communication, which in turn, uses NCCL, and then forces NCCL to use the internal nics on the VMs for communication (-x NCCL_SOCKET_IFNAME=eth0). MPI is only used to set up the cluster.
     
     viii. Monitor training progress: ``` tail -f nohup.out ```
     
-    ix. Start tensorboard on the same machine where you started training but will need to be inside the container: 
+    ix. Start tensorboard on the same machine where training started but will need to be inside the container: 
     ```
     docker exec -ti openseq2seq bash
     nohup tensorboard --logdir=/data/en-de-transformer
@@ -146,16 +146,16 @@ scp -i 1810104 root@158.175.79.242:data/en-de-transformer/* ~/Downloads/
 ![nvidia-smi graph](images/v100a_nvidia-smi.png)
 
 5. **Did you monitor network traffic (hint: apt install nmon )? Was network the bottleneck?**
-> Yes, I monitored the network traffic. The network does not seem to be the bottleneck based on the output from `nmon`, as shown below.
+> Yes, I monitored the network traffic. The network does not seem to be the bottleneck based on the output from `nmon`, as shown below. The network is pretty fast.
 
 > **nmon Screenshot**
-![nmon graph](images/nmon.png)
+![nmon graph](images/v100a_nmon2.png)
 
 6. **Take a look at the plot of the learning rate and then check the config file. Can you explan this setting?**
->
-
 > **Learning Rate Graph**
-![Learning Rate graph](images/learning_rate.png)
+![learning rate graph](images/learning_rate.png)
+
+> As seen in the graph, there is a period of ramp-up during the warm-up phase. And then the learning rate starts to decay.
 
 7. **How big was your training set (mb)? How many training lines did it contain?**
 > `train.de` is 711MB. `train.en` is 637MB. Each of these contains 4,562,102 lines.
@@ -164,13 +164,13 @@ scp -i 1810104 root@158.175.79.242:data/en-de-transformer/* ~/Downloads/
 ![Training Data Screenshot](images/train_data.png)
 
 8. **What are the files that a TF checkpoint is comprised of?**
->
+> A TF checkpoint is comprised of a data file, a meta file, and an index file. The data file contains the model weights.
 
 9. **How big is your resulting model checkpoint (mb)?**
->
+> The model check point is 868MB. 
 
 10. **Remember the definition of a "step". How long did an average step take?**
 > On average, a step takes ~1.8 seconds.
 
 11. **How does that correlate with the observed network utilization between nodes?**
-> 
+> The network utilization was good, which resulted in fast training time.
