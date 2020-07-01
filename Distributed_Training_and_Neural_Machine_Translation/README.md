@@ -87,9 +87,9 @@ Password: my-api-key
 7. Create containers on both VMs: ``` docker run --runtime=nvidia -d --name openseq2seq --net=host -e SSH_PORT=4444 -v /data:/data -p 6006:6006 openseq2seq_image ```
 8. On each VM, create an interactive bash sesion inside the container: ``` docker exec -ti openseq2seq bash ``` and run the following commands in the container shell:
 
-    i. Test mpi: ``` mpirun -n 2 -H <vm1 private ip address>,<vm2 private ip address> --allow-run-as-root hostname ``` 
+    i. Test MPI: ``` mpirun -n 2 -H <vm1 private ip address>,<vm2 private ip address> --allow-run-as-root hostname ``` 
     
-    ii. Pull data to be used in neural machine tranlsation training ([more info](https://nvidia.github.io/OpenSeq2Seq/html/machine-translation.html)):  
+    ii. Pull data to be used in neural machine translation training ([more info](https://nvidia.github.io/OpenSeq2Seq/html/machine-translation.html)):  
     ``` 
     cd /opt/OpenSeq2Seq 
     scripts/get_en_de.sh /data/wmt16_de_en
@@ -145,7 +145,7 @@ scp -i 1810104 root@158.175.79.242:data/en-de-transformer/* ~/Downloads/
 
 > **nvidia-smi Screenshot**
 
->![nvidia-smi graph](images/v100a_nvidia-smi.png)
+![nvidia-smi graph](images/v100a_nvidia-smi.png)
 
 5. **Did you monitor network traffic (hint: apt install nmon )? Was network the bottleneck?**
 > Yes, I monitored the network traffic. The network does not seem to be the bottleneck based on the output from `nmon`, as shown below. The network is pretty fast.
