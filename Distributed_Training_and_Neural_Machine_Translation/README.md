@@ -144,7 +144,6 @@ scp -i 1810104 root@158.175.79.242:data/en-de-transformer/* ~/Downloads/
 > Output from `nvidia-smi` indicates that both GPUs were fully utilized at 100%, as shown below.
 
 > **nvidia-smi Screenshot**
-
 ![nvidia-smi graph](images/v100a_nvidia-smi.png)
 
 5. **Did you monitor network traffic (hint: apt install nmon )? Was network the bottleneck?**
