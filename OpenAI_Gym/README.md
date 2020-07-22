@@ -32,14 +32,13 @@ We are using a Sequential model for the lander. A Sequential model is appropriat
 
 
 ## Training and Testing
-To run the environment, use these commands (ensure you have all the files from the hw11 github folder in your current directory on the TX2):
+To run the environment, use these commands (ensure all the files from the hw11 github folder are in the current directory on the TX2):
 
 ```
-# If you haven't added your User to the docker group, do it now
+# Add user to the Docker group
 sudo usermod -aG docker $USER
 
 # reboot to make the previous step take effect
-
 docker build -t hw11 -f Dockerfile.agent .
 
 # enable video sharing from the container
@@ -70,7 +69,7 @@ Training output looks like this:
 8 	: Episode || Reward:  -10.731355125180073 	|| Average Reward:  -204.92840769275233 	 epsilon:  0.9558895783575597
 ```
 
-The training will end when either the Average Reward is greater than 200, or 2000 iterations have passed. I would recommend killing the model if it ever hits 800, though.
+The training will end when either the Average Reward is greater than 200, or 2000 iterations have passed. But it is recommended that we kill the model if it ever hits 800.
 
 After the training, it will run a test process. The output will look like this:
 
@@ -92,7 +91,7 @@ Average Reward:  243.09916996497867
 
 The lunar landing mp4 files are stored in `/data/videos` on the TX2. 
 
-Sample videos are stored in object storage: https://hw11-lunar-landing.s3.us-south.cloud-object-storage.appdomain.cloud
+**Sample videos are stored in object storage: https://hw11-lunar-landing.s3.us-south.cloud-object-storage.appdomain.cloud**
 
 ## Results
 
@@ -105,19 +104,17 @@ Sample videos are stored in object storage: https://hw11-lunar-landing.s3.us-sou
 
 
 ## Questions and Answers
-Submit a write-up of the tweaks you made to the model and the effect they had on the results. 
-Questions to answer:
 1) What parameters did you change? 
-> As shown in the table above, I increased the first and second layers substantially to 256. I also tried to change the batch size and epoch. 
+> As shown in the table above, I increased the number of hidden units in the first and second layers substantially. I also increased the batch size and epoch. 
 
 2) What values did you try?
-> As shown in the table above, I increased the first and second layers to 256 and 512. I also tried doubling the number of epochs to 2 and the batch size to 128. 
+> As shown in the table above, I increased the number of hidden units in the first and second layers to 256. I also tried doubling the number of epochs to 2 and the batch size to 128. 
 
 3) Did you try any other changes that made things better or worse?
-> It is worth noting that with a batch size of 128, the TX2 seems to really struggle and regularly give out low memory warnings so training was rather slow. 
+> The changes made and the corresponding performance is shown in the table above. It is worth noting that with a batch size of 128, the TX2 seems to really struggle and regularly gives out low memory warnings so training is rather slow. 
 
 4) Did they improve or degrade the model? Did you have a test run with 100% of the scores above 200?
-> Increaing the first two layers, the epoch, and batch size definitely improve the model. But the effect varies. Increasing the batch size takes very long to train because of memory constraints. None of the test runs have 100% scores over 200. The logs are in the archive folder. Experiment #1 actually has testing scores as low as -23. Experiment #3 is the best performing one.
+> Increaing the first two layers, the epoch, and batch size definitely improve the model. But the effect varies. Increasing the batch size takes very long to train because of memory constraints. None of the test runs have 100% scores over 200. The logs are in the archive folder in this repo. Experiment #1 actually has testing scores as low as -23. Experiment #3 is the best performing one.
 
 5) Based on what you observed, what conclusions can you draw about the different parameters and their values? 
 > Increasing the number of hidden units allows the model to learn more about the different state and environment combinations. Increasing the batch size is beneficial but the TX2 complains about memory if the batch size is doubled to 128. The batch size allows the model to learn more state and environment combinations at the same time. Increasing the epoch allows the model to go through the data more than once and learn more from the data. 
