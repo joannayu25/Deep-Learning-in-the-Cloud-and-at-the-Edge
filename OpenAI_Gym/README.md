@@ -90,7 +90,9 @@ Starting Testing of the trained model...
 Average Reward:  243.09916996497867
 ```
 
-The lunar landing mp4 files are stored in `/data/videos` on the TX2
+The lunar landing mp4 files are stored in `/data/videos` on the TX2. 
+
+Sample videos are stored in object storage: https://hw11-lunar-landing.s3.us-south.cloud-object-storage.appdomain.cloud
 
 ## Results
 
@@ -99,9 +101,8 @@ The lunar landing mp4 files are stored in `/data/videos` on the TX2
 | Base  | 16  | 8  | 1 | 64   |   0.01 | - | - |
 | #1 | 256   | 256  |1   | 64  |0.01| 507 | 219.02 |
 | #2  | 256   | 256  |1   | 128  |0.01| 482 | 230.65 |
-|  #3 |  256   | 256  |2   | 64  |0.01| 0 |0 |
-| 1,000,000  | 500,000   | V100  |1   |   0.97031 |02:00:53 |
-| 1,000,000  | 500,000   | V100  |2   |  0.96953  |04:06:28 |
+|  #3 |  256   | 256  |2   | 64  |0.01| 497 |242.22 |
+
 
 ## Questions and Answers
 Submit a write-up of the tweaks you made to the model and the effect they had on the results. 
@@ -116,13 +117,13 @@ Questions to answer:
 > It is worth noting that with a batch size of 128, the TX2 seems to really struggle and regularly give out low memory warnings so training was rather slow. 
 
 4) Did they improve or degrade the model? Did you have a test run with 100% of the scores above 200?
->
+> Increaing the first two layers, the epoch, and batch size definitely improve the model. But the effect varies. Increasing the batch size takes very long to train because of memory constraints. None of the test runs have 100% scores over 200. The logs are in the archive folder. Experiment #1 actually has testing scores as low as -23. Experiment #3 is the best performing one.
 
 5) Based on what you observed, what conclusions can you draw about the different parameters and their values? 
-> 
+> Increasing the number of hidden units allows the model to learn more about the different state and environment combinations. Increasing the batch size is beneficial but the TX2 complains about memory if the batch size is doubled to 128. The batch size allows the model to learn more state and environment combinations at the same time. Increasing the epoch allows the model to go through the data more than once and learn more from the data. 
 
 6) What is the purpose of the epsilon value?
-> The epsilon value allows us to control the balance between exploration and exploitation. A high epsilon value allows the lunar to explore using random action. As the lunar learns from training, epsilon decreases because the action of the lunar is trained, so the randomness decreases. 
+> The epsilon value allows us to control the balance between exploration and exploitation. A high epsilon value allows the lunar to explore using random action. As the lunar learns from training, epsilon decreases because the action of the lunar is being trained, so the randomness decreases. 
 
 7) Describe "Q-Learning".
 > Q-learning refers to the reinforcement learning algorithm where an agent can decide what action to take given the provided policy and the current situation. A model of the environment is not required. Therefore, the agent has certain amount of freedom to handle problems with somewhat random transitions and rewards.
