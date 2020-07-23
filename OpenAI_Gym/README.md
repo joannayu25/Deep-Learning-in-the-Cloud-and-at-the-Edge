@@ -101,6 +101,7 @@ The lunar landing mp4 files are stored in `/data/videos` on the TX2.
 | #1 | 256   | 256  |1   | 64  |0.01| 507 | 219.02 |
 | #2  | 256   | 256  |1   | 128  |0.01| 482 | 230.65 |
 |  #3 |  256   | 256  |2   | 64  |0.01| 497 |242.22 |
+|  #4 |  512   | 256  |1   | 32  |0.01| 512 |238.32 |
 
 
 ## Questions and Answers
@@ -108,7 +109,7 @@ The lunar landing mp4 files are stored in `/data/videos` on the TX2.
 > As shown in the table above, I increased the number of hidden units in the first and second layers substantially. I also increased the batch size and epoch. 
 
 2) What values did you try?
-> As shown in the table above, I increased the number of hidden units in the first and second layers to 256. I also tried doubling the number of epochs to 2 and the batch size to 128. 
+> As shown in the table above, I increased the number of hidden units in the first and second layers to 512 and 256. I also tried doubling the number of epochs to 2 and the batch size to 128. 
 
 3) Did you try any other changes that made things better or worse?
 > The changes made and the corresponding performance is shown in the table above. It is worth noting that with a batch size of 128, the TX2 seems to really struggle and regularly gives out low memory warnings so training is rather slow. 
