@@ -1,0 +1,25 @@
+# This dockerfile tries to install Jetson Inference using Dusty's repo instruction. However, the build cannot complete due to an error with gl-display-test. As reported in the class Slack channel, Dusty seems to have made a recent change to his repo that caused this error. The build will only finish if we add flag -i to the make and make install lines. But even though the build could finish, we could not run the demo. The same error is encountered when installing directly on the TX2. 
+
+# FROM w251/cuda:dev-tx2-4.2_b158
+#FROM w251/pytorch:dev-tx2-4.3_b132
+FROM w251/keras:dev-tx2-4.3_b132
+
+
+RUN apt update
+RUN apt install -y git cmake wget gstreamer1.0-tools gstreamer1.0-plugins-good gstreamer1.0-plugins-base
+WORKDIR /
+RUN git clone http://github.com/dusty-nv/jetson-inference
+WORKDIR /jetson-inference
+RUN git submodule update --init
+RUN mkdir build
+WORKDIR /jetson-inference/build
+
+# Build
+RUN cmake ../ 
+RUN make -j6 -i
+
+RUN make install -i
+
+WORKDIR /jetson-inference/build/aarch64/bin
+
+RUN apt install -y gstreamer1.0-plugins-bad

@@ -1,0 +1,56 @@
+# This dockerfile tries to install mtcnn using pip, but encounters a dependency error saying that opencv-python version 4.1.0 or above is required. Error persisted even after opencv 4.3.0 is installed. The same error is encountered when installing directly on the TX2. 
+FROM w251/keras:dev-tx2-4.3_b132
+
+#Install requirements
+RUN apt-get update
+RUN apt-get install -y build-essential cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
+RUN apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
+RUN apt-get install -y python2.7-dev python3.6-dev python-dev python-numpy python3-numpy
+RUN apt-get install -y libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libdc1394-22-dev
+RUN apt-get install -y libv4l-dev v4l-utils qv4l2 v4l2ucp
+RUN apt-get install -y curl
+RUN apt-get update
+
+#Download opencv-4.3.0
+RUN curl -L https://github.com/opencv/opencv/archive/4.3.0.zip -o opencv-4.3.0.zip
+RUN curl -L https://github.com/opencv/opencv_contrib/archive/4.3.0.zip -o opencv_contrib-4.3.0.zip
+RUN unzip opencv-4.3.0.zip
+RUN unzip opencv_contrib-4.3.0.zip
+WORKDIR opencv-4.3.0/
+
+#Install opencv-4.3.0
+RUN mkdir release
+WORKDIR release/
+RUN cmake -D WITH_CUDA=ON \
+-D WITH_CUDNN=ON \
+-D CUDA_ARCH_BIN="5.3,6.2,7.2" \
+-D CUDA_ARCH_PTX="" \
+-D OPENCV_EXTRA_MODULES_PATH=/notebooks/opencv_contrib-4.3.0/modules \
+-D WITH_GSTREAMER=ON \
+-D WITH_LIBV4L=ON \
+-D BUILD_opencv_python2=ON \
+-D BUILD_opencv_python3=ON \
+-D BUILD_TESTS=OFF \
+-D BUILD_PERF_TESTS=OFF \
+-D BUILD_EXAMPLES=OFF \
+-D CMAKE_BUILD_TYPE=RELEASE \
+-D CMAKE_INSTALL_PREFIX=/usr/local ..
+RUN make -j5
+RUN make install
+
+RUN apt install -y python python3 python-dev python3-dev python-setuptools
+
+RUN pip list
+RUN ls /usr/local/lib/python3.6/dist-packages
+RUN ls /usr/local
+
+
+WORKDIR /
+RUN mkdir -p notebooks
+WORKDIR /notebooks
+
+EXPOSE 8888
+
+# Jupyter
+CMD jupyter notebook  --no-browser --ip=0.0.0.0 --allow-root
+
