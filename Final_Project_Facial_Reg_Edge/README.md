@@ -4,7 +4,7 @@ In this project, we performed transfer learning on FaceNet at the edge using Nvi
 
 Team: Erik Hou, Joanna Yu, Yuze Chen, Adam Johns
 
-The [project white paper](https://github.com/adamxjohns/w251project/blob/master/w251%20final%20project%20report%20final.pdf)
+The [project white paper](https://github.com/adamxjohns/w251project/blob/master/w251%20final%20project%20report%20final.pdf).
 
 ## Requirement
 
